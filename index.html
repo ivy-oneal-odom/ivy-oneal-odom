@@ -1,0 +1,1024 @@
+<!DOCTYPE HTML>
+<!--
+	Dimension by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Ivy O'Neal-Odom</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+		
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<div class="logo">
+							<!--<span class="icon fa-gem"></span>-->
+							<span class="icon"></span>
+						</div>
+						<div class="content">
+							<div class="inner">
+								<h1>Ivy O'Neal-Odom</h1>
+							</div>
+						</div>
+						<nav>
+							<ul>
+								<!-- <li><a href="#intro">Intro</a></li> -->
+								<li><a href="#projects">Projects</a></li>
+								<li><a href="#about">About</a></li>
+								<!-- <li><a href="#contact">Contact</a></li> -->
+								<!--<li><a href="#elements">Elements</a></li>-->
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Work -->
+							<article id="projects">
+								<div style="text-align:center;padding:20px;margin-top:10px;margin-bottom:10px;">
+									<h1>Professional Projects</h1>
+									<p>Finished projects that I'm proud of and which demonstrate my capabilities.</p>
+								</div>
+
+								<div style="border: 2px solid white;text-align:center;padding:20px;margin-top:10px;margin-bottom:10px;">
+									<h2 class="major">Algorithms Educational Aid</h2>
+									<p>An academic independent study made with my classmate Caroline Knote under the supervision of Audrey St. John at Mount Holyoke College for use in the CS-311 Algoritms course.
+										<br><br>Best viewed <a href="http://mhc-algorithms.github.io/">here</a></p>
+										<br>
+										<br>
+										<iframe style="width: 100%;height: 500px;" src="http://mhc-algorithms.github.io/" title="Algorithms">The iframe doesn't appear to be working. Please try the link above instead.</iframe>
+								</div>
+
+								<div style="border: 2px solid white;text-align:center;padding:20px;margin-top:10px;margin-bottom:10px;">
+									<h2 class="major">Compiler Design</h2>
+									<p>A fully functioning, self-contained compiler. Takes fictional C-- code and compiles it to MIPS to be interpreted via SPIM. Code generation is unfinished, but ongoing.</p>
+										<br>
+										<br>
+										<a href="./Compiler_IvyOO.zip">Download ZIP</a>
+								</div>
+
+								<div style="border: 2px solid white;text-align:center;padding:20px;margin-top:10px;margin-bottom:10px;">
+									<h2 class="major">Kardashev Predictions</h2>
+									<p>Given an optimistic look at the future of humanity, how long until we fully colonize the Milky Way? This question is explored in this python/jupyter powered simulation.</p>
+										<br>
+										<br>
+										<a href="./final_project_ivy.ipynb">Download File</a>
+								</div>
+
+
+								<div style="border: 2px solid white;text-align:center;padding:20px;margin-top:10px;margin-bottom:10px;">
+									<h2 class="major">MHC Shell</h2>
+									<p>
+										A simple shell with a handful of built in commands, PATH functionality, and basic multithreading.
+									</p>
+										<br>
+										<br>
+										<div style="background-color:#444444;padding:5px;border-radius:5px">
+										<pre style="text-align:left;overflow:scroll;height:400px;font-size:0.7em;">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+#define PROMPT_TEXT "mhcsh> "
+#define INPUT_LEN 128
+
+char WHITESPACE[4*5] = {" \n \t \r"};
+char BUILT_IN_COMMANDS[5][10] = {"exit", "cd", "pwd", "setpath", "printpath"};
+int NUM_BUILT_IN_COMMANDS = 5;
+
+
+
+char path[INPUT_LEN];			//The string which contains the path variable. I found it easier to store this as a string and tokenize it as needed, rather than store the tokens here
+int pathFilled = 0;				//Whether or not the path is set to something
+
+//Exits the shell with an exit code of 0
+int my_exit(int argc, char argv[INPUT_LEN][INPUT_LEN]){
+	exit(0);
+}
+
+//Change Directory to whatever is in argv[1] or getenv("HOME") if argv[1] == NULL
+int cd(int argc, char argv[INPUT_LEN][INPUT_LEN]){
+	if(argc == 1){
+		if(chdir(getenv("HOME")) != 0){
+			perror("Error in cd\n");
+			return 1;
+		}
+	}else{
+		if(chdir(argv[1]) != 0){
+			perror("Error in cd\n");
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+//Prints the working directory
+int pwd(int argc, char argv[INPUT_LEN][INPUT_LEN]){
+	char wd[512];
+	if(getcwd(wd, sizeof(wd)) == NULL){
+		perror("Error Getting CWD\n");
+		return 1;
+	}
+	printf("%s\n", wd);
+
+	return 0;
+}
+
+//Sets the path variable
+int setpath(int argc, char argv[INPUT_LEN][INPUT_LEN]){
+	if(argc == 1){
+		perror("Please specify a PATH to set\n");
+		return 1;
+	}
+
+	// if(strcmp(argv[1], "PATH") == 0){		//This just makes our lives easier. If you run "setpath PATH" it will set path to $PATH, which is helpful
+	// 	strcpy(path, getenv("PATH"));
+	// }else{
+	// 	strcpy(path, argv[1]);
+	// }
+
+	strcpy(path, argv[1]);
+
+	pathFilled = strlen(path);		//If a non-0 new path was set, make pathFilled true
+
+	return 0;
+}
+
+//Prints the path variable
+int printpath(int argc, char argv[INPUT_LEN][INPUT_LEN]){
+	if(!pathFilled){
+		perror("No PATH\n");
+		return 1;
+	}
+
+	printf("%s\n", path);
+
+	return 0;
+}
+
+//Handle non-built-in commands
+int nonBuiltIn(int argc, char argv[INPUT_LEN][INPUT_LEN], int foreground){
+	if(!pathFilled){
+		perror("Please specify a PATH\n");
+		return 1;
+	}else{
+		pid_t pid;
+
+		pid = fork();
+
+		if(pid < 0){	//Error forking
+			perror("Cannot Fork\n");
+			return 1;
+		}else if(pid > 0){			//I am the parent and should wait
+			if(foreground){			//I should only wait if we're running in the foreground
+				int status;
+				waitpid(pid, &status, 0);
+			}
+		}else{				//I am the child and should execute
+			//Get PATH tokens
+			char pathTokens[INPUT_LEN][INPUT_LEN];		//The List of Tokens
+			int numPathTokens = 0;						//The Number of Tokens
+
+			char *pathToken;
+			pathToken = strtok(path, ":");
+
+			int pathTokenIndex = 0;
+
+			while(pathToken != NULL){
+				strcpy(pathTokens[pathTokenIndex], pathToken);
+				pathTokenIndex++;
+				pathToken = strtok(NULL, ":");
+			}
+
+			numPathTokens = pathTokenIndex;
+
+			//Check for command in $PATH for the file and fork + exec if it exists
+			for(int i = 0; i < numPathTokens; i++){
+				char commandPath[INPUT_LEN];
+				strcpy(commandPath, pathTokens[i]);
+				strcat(commandPath, "/");
+				strcat(commandPath, argv[0]);
+
+				if(access(commandPath, X_OK) != -1){
+					char *args[argc + 1];
+					for(int j = 0; j < argc; j++){
+						args[j] = argv[j];
+					}
+
+					args[argc - 1 + foreground] = '\0';		//We want to overwrite the '&' if it exists, and we want to terminate the args array with NULL
+
+					execve(commandPath, args, 0);
+				}
+			}
+
+			//If it doesn't exist in $PATH, cannot be executed, report an error but keep the shell running
+			perror("Error Executing\n");
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+int main(int argc, char *argv[]){
+
+	//Exit Gracefully if there are any arguments
+	if(argc != 1){
+		printf("Please do not specify any arguments.\n");
+		return 1;
+	}
+
+
+	//The core loop of the shell
+	while(1){
+		//Print Prompt
+		printf("%s", PROMPT_TEXT);
+
+		//Get Input (max len 128 bytes)
+		char input_string[INPUT_LEN];
+		fgets(input_string, INPUT_LEN, stdin);
+
+		if(strlen(input_string) != 0){		//Handle blank lines
+			//Parse Input into Tokens (handling blank lines and consecutive whitespace without breaking)
+			char tokens[INPUT_LEN][INPUT_LEN];		//The List of Tokens
+			int numTokens = 0;						//The Number of Tokens
+
+			char *token;
+			token = strtok(input_string, WHITESPACE);
+
+			int tokenIndex = 0;
+
+			while(token != NULL){
+				strcpy(tokens[tokenIndex], token);
+				tokenIndex++;
+				token = strtok(NULL, WHITESPACE);
+			}
+
+			numTokens = tokenIndex;
+
+			//Flag Foreground/Background with a terminating '&' (foreground is true if it should be run in foreground, false otherwise)
+			int foreground = 1;
+			if(strcmp(tokens[numTokens - 1], "&") == 0){
+				foreground = 0;
+			}
+
+			//Check if Input is Built-In Command and Execute it if it is a valid command (if it returns with an error, keep running the shell)
+			int commandIndex = -1;			//Initialized to -1. If it's a built in command, it will be changed to the index of that command
+			for(int i = 0; i < NUM_BUILT_IN_COMMANDS; i++){
+				if(strcmp(BUILT_IN_COMMANDS[i], tokens[0]) == 0){
+					commandIndex = i;
+				}
+			}
+
+			if(commandIndex != -1){
+				switch(commandIndex){
+					case 0:
+						my_exit(numTokens, tokens);
+						break;
+					case 1:
+						cd(numTokens, tokens);
+						break;
+					case 2:
+						pwd(numTokens, tokens);
+						break;
+					case 3:
+						setpath(numTokens, tokens);
+						break;
+					case 4:
+						printpath(numTokens, tokens);
+						break;
+				}
+			}else{
+				nonBuiltIn(numTokens, tokens, foreground);
+			}
+
+		}
+	}
+
+	return 0;
+}</pre>
+									</div>
+									<br>
+									<br>
+										<a href="./mhcsh.c">Download File</a>
+								</div>
+
+
+								<div style="border: 2px solid white;text-align:center;padding:20px;margin-top:10px;margin-bottom:10px;">
+									<h2 class="major">Organization Sorting</h2>
+									<p>A script designed to sort people into groups. This is used biannually by the student organization Renegades to sort players into games.
+									<div style="background-color:#444444;padding:5px;border-radius:5px">
+										<pre style="text-align:left;overflow:scroll;height:400px;font-size:0.7em;">'''
+Written by Ivy O'Neal-Odom (Class of or 2020) during Fall 2019
+
+This program sorts Renegades players into their games.
+
+
+It prioritizes seniority first, then speediness of the responses among classmates
+
+
+Player responses are stored in a downloaded .csv file (reading the .csv file may need to be changed based on the OS of the user)
+
+	Each row of the csv is 1 player response per row
+
+		Column F (index 5, since arrays start at 0) is the Class Year (2020, 2021, etc.)
+		Column C (index 2, since arrays start at 0) is the First Name of the player
+		In getMaxAndMinPlayers() the user is asked for the index of the first and last column of games
+		The columns between these values (inclusive, counting up from 0), are preferences.
+			The preference options are enumerated in POSSIBLE_PREFERENCES (they must be 1 character long and integers)
+			Any responses in these cells besides a POSSIBLE_PREFERENCES value will be ignored
+			If the player inputs multiple preferences of the same value (ie. 1 '1' and the rest are '5's),
+				Then the leftmost one is encountered first and given preference
+'''
+
+import pandas as pd
+import math
+
+#Debugging Values
+SENIOR_YEAR = 2020
+JUNIOR_YEAR = 2021
+SOPHMORE_YEAR = 2022
+FRESHMAN_YEAR = 2023
+
+POSSIBLE_PREFERENCES = [1, 2, 3, 4, 5] #Be sure to order these in decreasing order of desireability from left to right
+
+file_location = "Spring 2020 Game Distribution.csv"	#Be sure to change this as appropriate
+csv = pd.read_csv(file_location)
+csv = pd.DataFrame(csv)
+
+FIRST_COL = 6
+LAST_COL = 13
+
+#Each class will contain the players from those classes
+#We will iterate over the classes in this order, so seniority preference is given
+seniors = []
+juniors = []
+sophmores = []
+freshmen = []
+other_year_students = []
+
+classes = [seniors, juniors, other_year_students, sophmores, freshmen]
+student_preference_lists = []
+
+game_names = []
+max_players = []
+min_players = []
+game_player_lists = []
+game_player_name_lists = []
+
+#Initialize the class arrays
+def setupClasses():
+	for year_index in range(len(csv.index)):
+		class_year = csv.iloc[year_index, 5]
+		if (str(class_year) == str(SENIOR_YEAR)):
+			seniors.append(year_index)
+		elif(str(class_year) == str(JUNIOR_YEAR)):
+			juniors.append(year_index)
+		elif(str(class_year) == str(SOPHMORE_YEAR)):
+			sophmores.append(year_index)
+		elif(str(class_year) == str(FRESHMAN_YEAR)):
+			freshmen.append(year_index)
+		else:
+			other_year_students.append(year_index)
+
+#Get the acceptable range of player numbers for each game
+def getMaxAndMinPlayers():
+	games_len = LAST_COL - FIRST_COL
+
+	#For each game, construct the mins and maxes
+	for game_index in range(FIRST_COL, LAST_COL):
+		game_name = csv.columns.values[game_index]
+		game_names.append(game_name)
+
+		#Actual Use Values
+		temp_max_players = input("What is the maximum player count for " + str(game_name))
+		temp_min_players = input("What is the minimum player count for " + str(game_name))
+
+		#Debugging
+		#temp_max_players = 5
+		#temp_min_players = 3
+
+		game_player_lists.append([])
+		game_player_name_lists.append([])
+
+		max_players.append(int(temp_max_players))
+		min_players.append(int(temp_min_players))
+
+
+#Given a class year (and index of the student in that year), return a list of their preferences in descending order of preferability
+def getChoices(class_year, student_index):
+	preference_list = []
+	for preference in POSSIBLE_PREFERENCES:
+		for game_index in range(FIRST_COL, LAST_COL):
+			if (len(str(csv.iloc[student_index, game_index])) == 1):
+				if(int(csv.iloc[student_index, game_index]) == preference):
+					preference_list.append(game_index)
+
+	student_preference_lists.append([student_index, preference_list])
+
+	return preference_list
+
+
+#Print a given class year's students
+def printClass(classArray):
+	classPeople = ""
+
+	for student_index in classArray:
+		classPeople += str(csv.iloc[student_index, 2])
+		classPeople += " "
+		classPeople += str(csv.iloc[student_index, 3])
+		classPeople += ", "
+
+	classPeople = classPeople[:-2]
+
+	print (classPeople)
+
+
+#Iterate over each student, printing their preferences
+def printPreferences():
+	for preference in student_preference_lists:
+		print (csv.iloc[preference[0], 2] + " has the following preference list: ")
+		for game in range(len(preference[1])):
+			print (csv.columns.values[preference[1][game]] + " -> ")
+		print("")
+		print("")
+		print("")
+
+
+#Setup the classes so we can iterate by seniority
+setupClasses()
+
+#Get max and min players for each game
+getMaxAndMinPlayers()
+
+#Iterate over seniors, then juniors, etc.
+for class_year in classes:
+
+	#Iterate over each student in this class, in order of who responded first
+	for student_index in class_year:
+		
+		#For each student in a class, give them their highest rated class if it isn't full
+		choices = getChoices(class_year, student_index)
+		not_in_game = True
+		for game_index in choices:
+			if(not_in_game):
+				name_of_game = csv.columns.values[game_index]
+				index_of_game_in_array = game_names.index(name_of_game)
+				if(len(game_player_lists[index_of_game_in_array]) < max_players[index_of_game_in_array]):	#There's still room in the game
+					not_in_game = False
+					game_player_lists[index_of_game_in_array].append(student_index)
+					game_player_name_lists[index_of_game_in_array].append(str(csv.iloc[student_index, 2]) + " " + str(csv.iloc[student_index, 3]))
+
+#Print out the members of each game
+for index_of_game_in_array in range(len(game_player_lists)):
+	print (game_names[index_of_game_in_array] + ": ")
+	for player in game_player_name_lists[index_of_game_in_array]:
+		print ("	" + player)
+	print("")
+	print("")
+	print("")
+
+#Print out any lonely players, underfilled games, and unfilled games
+underfilled_games = []
+for index_of_game_in_array in range(len(game_player_lists)):
+	if len(game_player_lists[index_of_game_in_array]) < min_players[index_of_game_in_array]:
+		underfilled_games.append(game_names[index_of_game_in_array])
+
+unfilled_games = []
+for index_of_game_in_array in range(len(game_player_lists)):
+	if len(game_player_lists[index_of_game_in_array]) < max_players[index_of_game_in_array]:
+		unfilled_games.append(game_names[index_of_game_in_array])
+
+lonely_players = []
+for class_year in classes:
+	for student_index in class_year:	#For every student
+		lonely = True		#Assume loneliness
+		for game in game_player_lists:
+			for player_index in game:	#For every player in every game
+				if player_index == student_index:
+					lonely = False
+		if lonely:
+			lonely_players.append(str(csv.iloc[student_index, 2]) + " " + str(csv.iloc[student_index,3]))
+
+print ("Underfilled Games (don't meet their minimum requirement): " + str(underfilled_games))
+print ("Unfilled Games (aren't completely full, and can easily take any lonely players): " + str(unfilled_games))
+print ("Lonely Players (players who aren't in a game): " + str(lonely_players))</pre>
+									</div>
+								</div>
+
+								<div style="border: 2px solid white;text-align:center;padding:20px;margin-top:10px;margin-bottom:10px;">
+									<h2 class="major">Fourier Transforms</h2>
+									<p>Some experimentation with Fourier transforms. Generates a waveform from pure tones and breaks it back down into its tones via a Fourier transform.
+									<div style="background-color:#444444;padding:5px;border-radius:5px">
+										<pre style="text-align:left;overflow:scroll;height:400px;font-size:0.7em;">
+											'''
+Written by Ivy O'Neal-Odom in November 2019 with help from Pythonic for the Fourier transform
+
+This is a personal project experimenting with Fourier transforms. This program does two things:
+	1) Given two pure tones, generate a resonant overtone, and then break it down again into pure tones via a Fourier transform
+	2) Given an audio file, read in the waveform, and then break it down into pure tones via a Fourier transform (WIP)
+
+Currently (as of November 14, 2019), the first goal has been achieved, but the second one is still a challenge.
+Part of the issue is that the Fourier transform function requires the data to be stored in a very specfic manner, and 
+python's various proprietary data structures are not playing nice with each other. 
+'''
+import numpy as np
+import matplotlib.pyplot as plotter
+import pprint
+from scipy.io import wavfile as wav
+
+pp = pprint.PrettyPrinter()		#Used to print arrays in a cleaner format
+
+audioFile = ""		#Set to empty if you want to construct the soundwave, set to a file url if you want to read the .wav file.
+
+#---------------------------------------------------Get soundwave from .wav file--------------------------------------------------------------
+if len(audioFile) > 0:
+	print("Generating Soundwave from File")
+	samplingFrequency, sineSum_ = wav.read(audioFile)
+	beginTime = 0
+	samplingInterval = 1/samplingFrequency
+	endTime = 100
+
+	sineSum = []
+	for i in range(0, len(sineSum_)):
+		sineSum.append(int(str(sineSum_[i])[1:-1].split()[0]))		#This complicated array manipulation is to isolate a single audio channel. If the file has mono audio instead of stereo, you don't need most of this line
+
+	timePoints = np.arange(beginTime, endTime, samplingInterval)
+#---------------------------------------------------Generate a complex soundwave (eventually will be read from microphone)--------------------
+else:
+	print("Generating Soundwave from Tones")
+	#Generate the pure sine waves
+	samplingFrequency = 100.0
+	samplingInterval = 1.0/samplingFrequency
+
+	beginTime = 0
+	endTime = 10
+
+	frequency_1 = 4
+	frequency_2 = 7
+
+	timePoints = np.arange(beginTime, endTime, samplingInterval)
+
+	sine1 = np.sin(2*np.pi*frequency_1*timePoints)
+	sine2 = np.sin(2*np.pi*frequency_2*timePoints)
+
+	#Make a complex soundwave out of the above pure tones
+	sineSum = sine1 + sine2
+#----------------------------------------------------Given an array of points representing a complex soundwave, separate out the pure tones
+def graphPureTone(axisIndex, times, sine, frequency):
+	axis[axisIndex].set_title("Pure Tone at " + str(frequency) + " Hz")
+	axis[axisIndex].plot(times, sine)
+	axis[axisIndex].set_xlabel("Time")
+	axis[axisIndex].set_ylabel("Amplitude")
+	axis[axisIndex].set_xlim([0, 1])
+
+def graphComplex(axisIndex, times, sine):
+	axis[axisIndex].set_title("Complex Soundwave")
+	axis[axisIndex].plot(times, sine)
+	axis[axisIndex].set_xlabel("Time")
+	axis[axisIndex].set_ylabel("Amplitude")
+
+def graphFourier(axisIndex, frequencyList, fourier):
+	axis[axisIndex].set_title("Fourier Transform")
+	axis[axisIndex].plot(frequencyList, fourier)
+	axis[axisIndex].set_xlabel("Frequency")
+	axis[axisIndex].set_ylabel("Amplitude")
+
+print("Performing Fourier Transform")
+#Perform the Fourier Transform
+fourierTransform = np.fft.fft(sineSum)/len(sineSum)		#Perform the Fourier Transform
+fourierTransform = fourierTransform[range(int(len(sineSum)/2))] # Exclude sampling frequency
+
+#We need to know all the frequencies to have an x axis
+timePointCount = len(sineSum)
+fourierTimePoints = np.arange(int(timePointCount/2))
+timePeriod = timePointCount/samplingFrequency
+frequencies = fourierTimePoints/timePeriod
+
+
+#------------------------------------------Given the Fourier Transform, identify the pure tones--------------------------------------------------
+pureFrequencies = []
+
+for strength in fourierTransform:
+	if abs(np.imag(strength)) > 0.1:
+		pureFrequencies.append(np.where(fourierTransform == strength)[0][0]/10)
+
+pp.pprint(pureFrequencies)	#For testing purposes only
+#------------------------------------------Given an array of frequencies of the pure tones, construct arrays for each tone-----------------------
+pureTones = []
+
+for frequency in pureFrequencies:
+	pureTones.append(np.sin(2*np.pi*frequency*timePoints))
+#-----------------------------------------------------Done with all math, display the graphs-----------------------------------------------------
+
+#Plotting Housekeeping
+numGraphs = 1 + 1 + len(pureTones)	#Complex Soundwave + Fourier Transform + Pure Tones
+
+plot_x = 15
+plot_y = 15
+figure, axis = plotter.subplots(numGraphs, 1, figsize=(plot_x, plot_y))
+plotter.subplots_adjust(hspace=2)
+
+#Graph the complex soundwave that we are starting with, either the one read from the file or the one created from tones
+if len(audioFile) > 0:
+	graphComplex(0, timePoints[beginTime:lengthGathered], sineSum[beginTime:lengthGathered])
+else:
+	graphComplex(0, timePoints, sineSum)
+
+#Graph the Fourier Transform of the complex soundwave
+graphFourier(1, frequencies, abs(fourierTransform))
+
+#Graph the Pure Tones
+for toneIndex in range(len(pureTones)):
+	graphPureTone(1 + 1 + toneIndex, timePoints, pureTones[toneIndex], pureFrequencies[toneIndex])
+
+#Actually plot the graphs
+plotter.show()
+										</pre>
+									</div>
+								</div>
+
+
+
+
+								<div style="text-align:center;padding:20px;margin-top:10px;margin-bottom:10px;">
+									<h1>Personal Projects</h1>
+									<p>Fun personal work I've done in my free time. For more professional work, see above.</p>
+								</div>
+								<div style="border: 2px solid white;text-align:center;padding:20px;margin-top:10px;margin-bottom:10px;">
+									<h2 class="major">Halloween Countdown Timer</h2>
+									<p>Just a simple countdown timer until next Halloween. Accuracy not guaranteed.</p>
+									<div id="halloweenWrapper" style="font-size:90%;text-align:center">
+										<p id="halloweenCountdown"></p>
+									</div>
+								</div>
+
+								<div style="border: 2px solid white;text-align:center;padding:20px;margin-top:10px;margin-bottom:10px;">
+									<h2 class="major" style="word-wrap: break-word;">Burning Wheel Probability</h2>
+									<p>Probability Calculator for a d6 Dice Pool</p>
+									<div id="burningWheelWrapper" style="font-size:90%;text-align:center;">
+										Number of Dice to Roll: <input type="text" id="diceNum" value="2"><br>
+										Dice Succeed on 6 Through: <input type="text" id="minSucceed" value="4"><br>
+										Number of Successes<input type="text" id="ob" value="1"><br>
+										Likelihood of That Many Successes Given Those Dice: <p id="probability"></p>
+									</div>
+								</div>
+							</article>
+
+						<!-- About -->
+							<article id="about">
+								<h2 class="major">About</h2>
+								<!-- <span class="image main"><img src="images/pic03.jpg" alt="" /></span> -->
+								<h3><a href="./IvyONeal-OdomResume.pdf">Resume</a></h3>
+								<p style="margin-left:20px">
+<b>Ivy O’Neal-Odom</b><br>
+South Hadley, Massachusetts 01075<br>
+ivyoo@protonmail.com<br>
+<a href="https://www.linkedin.com/in/ivy-oneal-odom">LinkedIn</a><br>
+<br>
+<b>EDUCATION</b><br>
+    <b>Mount Holyoke College</b>, South Hadley, MA<br>
+Bachelors in Computer Science, May 2020&emsp;&emsp;GPA: 3.58<br>
+    Courses Include: &ensp;Data Structures&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;Algorithms<br>
+                &ensp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Theory of Computation&emsp;&emsp;&emsp; Modeling and Simulation<br>
+                &ensp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Discrete Mathematics&emsp;&emsp;&emsp;&emsp;Physical Computing and Robotics<br>
+<br>
+<b>RELEVANT EXPERIENCE</b><br>
+<b>Research Assistant</b><br>
+&emsp;&emsp;&emsp;&emsp;December 2019 - Present<br><br>
+<b>Website Manager</b><br>
+&emsp;&emsp;&emsp;&emsp;2018 - May 2020<br><br>
+<b>Compassionate Young Leaders Certificate from the Dalai Lama Center for Ethics and Transformative Values at MIT</b><br>
+&emsp;&emsp;&emsp;&emsp;2016-2017<br>
+<br>
+<b>Paid Intern</b>, Enterra Solutions PA<br>
+&emsp;&emsp;&emsp;&emsp;Summer of 2016<br>
+<br>
+<b>Paid Intern</b>, Enterra Solutions PA<br>
+&emsp;&emsp;&emsp;&emsp;Summer of 2015<br>
+<br>
+<b>Website Manager</b>, Renegades (Student Organization at Mount Holyoke College)<br>
+&emsp;&emsp;&emsp;&emsp;Spring 2019-present<br>
+<br>
+<b>Sustainable Architecture and Ecology Intern</b>, Sirius Community MA<br>
+&emsp;&emsp;&emsp;&emsp;Summer of 2019<br>
+<br>
+<b>AV Tech for TEDx George School Conference</b>, George School PA<br>
+&emsp;&emsp;&emsp;&emsp;December 3, 2016<br>
+<br>
+<b>ADDITIONAL EXPERIENCE</b><br>
+<b>Member of the Children’s Hospital of Philadelphia Gender Clinic Advisory Board</b><br>
+&emsp;&emsp;&emsp;&emsp;2016 - 2017<br>
+<b>SKILLS</b><br>
+<b>Languages:</b> Latin - Intermediate, ASL (American Sign Language) - Beginner, French - Beginner, Russian - Beginner<br>
+<br>
+<b>Programming Languages:</b> Java/C#, HTML/CSS and JavaScript/JQuery, Python, MySQL, Arduino C, Shell Scripting, C++<br>
+<br>
+<b>Computer Skills:</b>	Ubuntu Linux, Physical Computing, Unity, Amazon Web Service, NGINX, LibreOffice, Microsoft Office, Google Docs/Sheets/Slides,<br>
+<br>
+<b>CERTIFICATIONS</b><br>
+SCUBA Diving: PADI Advanced Open Water<br>
+Emergency First Responder and First Aid (via PADI)<br>
+								</p>
+							</article>
+
+						<!-- Contact -->
+							<article id="contact">
+								<h2 class="major">Contact</h2>
+								<form method="post" action="#">
+									<div class="fields">
+										<div class="field half">
+											<label for="name">Name</label>
+											<input type="text" name="name" id="name" />
+										</div>
+										<div class="field half">
+											<label for="email">Email</label>
+											<input type="text" name="email" id="email" />
+										</div>
+										<div class="field">
+											<label for="message">Message</label>
+											<textarea name="message" id="message" rows="4"></textarea>
+										</div>
+									</div>
+									<ul class="actions">
+										<li><input type="submit" value="Send Message" class="primary" /></li>
+										<li><input type="reset" value="Reset" /></li>
+									</ul>
+								</form>
+								<ul class="icons">
+									<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+								</ul>
+							</article>
+
+						<!-- Elements -->
+							<article id="elements">
+								<h2 class="major">Elements</h2>
+
+								<section>
+									<h3 class="major">Text</h3>
+									<p>This is <b>bold</b> and this is <strong>strong</strong>. This is <i>italic</i> and this is <em>emphasized</em>.
+									This is <sup>superscript</sup> text and this is <sub>subscript</sub> text.
+									This is <u>underlined</u> and this is code: <code>for (;;) { ... }</code>. Finally, <a href="#">this is a link</a>.</p>
+									<hr />
+									<h2>Heading Level 2</h2>
+									<h3>Heading Level 3</h3>
+									<h4>Heading Level 4</h4>
+									<h5>Heading Level 5</h5>
+									<h6>Heading Level 6</h6>
+									<hr />
+									<h4>Blockquote</h4>
+									<blockquote>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan faucibus. Vestibulum ante ipsum primis in faucibus lorem ipsum dolor sit amet nullam adipiscing eu felis.</blockquote>
+									<h4>Preformatted</h4>
+									<pre><code>i = 0;
+
+while (!deck.isInOrder()) {
+    print 'Iteration ' + i;
+    deck.shuffle();
+    i++;
+}
+
+print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
+								</section>
+
+								<section>
+									<h3 class="major">Lists</h3>
+
+									<h4>Unordered</h4>
+									<ul>
+										<li>Dolor pulvinar etiam.</li>
+										<li>Sagittis adipiscing.</li>
+										<li>Felis enim feugiat.</li>
+									</ul>
+
+									<h4>Alternate</h4>
+									<ul class="alt">
+										<li>Dolor pulvinar etiam.</li>
+										<li>Sagittis adipiscing.</li>
+										<li>Felis enim feugiat.</li>
+									</ul>
+
+									<h4>Ordered</h4>
+									<ol>
+										<li>Dolor pulvinar etiam.</li>
+										<li>Etiam vel felis viverra.</li>
+										<li>Felis enim feugiat.</li>
+										<li>Dolor pulvinar etiam.</li>
+										<li>Etiam vel felis lorem.</li>
+										<li>Felis enim et feugiat.</li>
+									</ol>
+									<h4>Icons</h4>
+									<ul class="icons">
+										<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
+									</ul>
+
+									<h4>Actions</h4>
+									<ul class="actions">
+										<li><a href="#" class="button primary">Default</a></li>
+										<li><a href="#" class="button">Default</a></li>
+									</ul>
+									<ul class="actions stacked">
+										<li><a href="#" class="button primary">Default</a></li>
+										<li><a href="#" class="button">Default</a></li>
+									</ul>
+								</section>
+
+								<section>
+									<h3 class="major">Table</h3>
+									<h4>Default</h4>
+									<div class="table-wrapper">
+										<table>
+											<thead>
+												<tr>
+													<th>Name</th>
+													<th>Description</th>
+													<th>Price</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Item One</td>
+													<td>Ante turpis integer aliquet porttitor.</td>
+													<td>29.99</td>
+												</tr>
+												<tr>
+													<td>Item Two</td>
+													<td>Vis ac commodo adipiscing arcu aliquet.</td>
+													<td>19.99</td>
+												</tr>
+												<tr>
+													<td>Item Three</td>
+													<td> Morbi faucibus arcu accumsan lorem.</td>
+													<td>29.99</td>
+												</tr>
+												<tr>
+													<td>Item Four</td>
+													<td>Vitae integer tempus condimentum.</td>
+													<td>19.99</td>
+												</tr>
+												<tr>
+													<td>Item Five</td>
+													<td>Ante turpis integer aliquet porttitor.</td>
+													<td>29.99</td>
+												</tr>
+											</tbody>
+											<tfoot>
+												<tr>
+													<td colspan="2"></td>
+													<td>100.00</td>
+												</tr>
+											</tfoot>
+										</table>
+									</div>
+
+									<h4>Alternate</h4>
+									<div class="table-wrapper">
+										<table class="alt">
+											<thead>
+												<tr>
+													<th>Name</th>
+													<th>Description</th>
+													<th>Price</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Item One</td>
+													<td>Ante turpis integer aliquet porttitor.</td>
+													<td>29.99</td>
+												</tr>
+												<tr>
+													<td>Item Two</td>
+													<td>Vis ac commodo adipiscing arcu aliquet.</td>
+													<td>19.99</td>
+												</tr>
+												<tr>
+													<td>Item Three</td>
+													<td> Morbi faucibus arcu accumsan lorem.</td>
+													<td>29.99</td>
+												</tr>
+												<tr>
+													<td>Item Four</td>
+													<td>Vitae integer tempus condimentum.</td>
+													<td>19.99</td>
+												</tr>
+												<tr>
+													<td>Item Five</td>
+													<td>Ante turpis integer aliquet porttitor.</td>
+													<td>29.99</td>
+												</tr>
+											</tbody>
+											<tfoot>
+												<tr>
+													<td colspan="2"></td>
+													<td>100.00</td>
+												</tr>
+											</tfoot>
+										</table>
+									</div>
+								</section>
+
+								<section>
+									<h3 class="major">Buttons</h3>
+									<ul class="actions">
+										<li><a href="#" class="button primary">Primary</a></li>
+										<li><a href="#" class="button">Default</a></li>
+									</ul>
+									<ul class="actions">
+										<li><a href="#" class="button">Default</a></li>
+										<li><a href="#" class="button small">Small</a></li>
+									</ul>
+									<ul class="actions">
+										<li><a href="#" class="button primary icon solid fa-download">Icon</a></li>
+										<li><a href="#" class="button icon solid fa-download">Icon</a></li>
+									</ul>
+									<ul class="actions">
+										<li><span class="button primary disabled">Disabled</span></li>
+										<li><span class="button disabled">Disabled</span></li>
+									</ul>
+								</section>
+
+								<section>
+									<h3 class="major">Form</h3>
+									<form method="post" action="#">
+										<div class="fields">
+											<div class="field half">
+												<label for="demo-name">Name</label>
+												<input type="text" name="demo-name" id="demo-name" value="" placeholder="Jane Doe" />
+											</div>
+											<div class="field half">
+												<label for="demo-email">Email</label>
+												<input type="email" name="demo-email" id="demo-email" value="" placeholder="jane@untitled.tld" />
+											</div>
+											<div class="field">
+												<label for="demo-category">Category</label>
+												<select name="demo-category" id="demo-category">
+													<option value="">-</option>
+													<option value="1">Manufacturing</option>
+													<option value="1">Shipping</option>
+													<option value="1">Administration</option>
+													<option value="1">Human Resources</option>
+												</select>
+											</div>
+											<div class="field half">
+												<input type="radio" id="demo-priority-low" name="demo-priority" checked>
+												<label for="demo-priority-low">Low</label>
+											</div>
+											<div class="field half">
+												<input type="radio" id="demo-priority-high" name="demo-priority">
+												<label for="demo-priority-high">High</label>
+											</div>
+											<div class="field half">
+												<input type="checkbox" id="demo-copy" name="demo-copy">
+												<label for="demo-copy">Email me a copy</label>
+											</div>
+											<div class="field half">
+												<input type="checkbox" id="demo-human" name="demo-human" checked>
+												<label for="demo-human">Not a robot</label>
+											</div>
+											<div class="field">
+												<label for="demo-message">Message</label>
+												<textarea name="demo-message" id="demo-message" placeholder="Enter your message" rows="6"></textarea>
+											</div>
+										</div>
+										<ul class="actions">
+											<li><input type="submit" value="Send Message" class="primary" /></li>
+											<li><input type="reset" value="Reset" /></li>
+										</ul>
+									</form>
+								</section>
+
+							</article>
+
+					</div>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+					</footer>
+
+			</div>
+
+		<!-- BG -->
+			<div id="bg"></div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+	</div>
+
+	</body>
+</html>
